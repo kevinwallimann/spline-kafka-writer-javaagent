@@ -20,9 +20,10 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class KafkaWriterOnCompletionAdvice {
     @Advice.OnMethodEnter
-    public static RecordMetadata enter(@Advice.Argument(readOnly = true, value = 0) RecordMetadata recordMetadata) {
+    public static void enter(@Advice.Origin String name, @Advice.AllArguments() Object[] args) {
         System.out.println("Entering KafkaWriterOnCompletionInterceptor");
-        System.out.println("recordMetadata: " + recordMetadata);
-        return recordMetadata;
+        System.out.println("Entering: " + name);
+        RecordMetadata recordMetadata = (RecordMetadata) args[0];
+        System.out.println("RecordMetadata:" + recordMetadata);
     }
 }

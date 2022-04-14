@@ -17,7 +17,6 @@ package za.co.absa.spline.javaagent;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
-import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.instrument.Instrumentation;
 
@@ -25,10 +24,10 @@ public class Agent {
     public static void load(String args, Instrumentation inst) {
         System.out.println("Spline Kafka Writer Java Agent loaded");
         new AgentBuilder.Default()
-                .type(ElementMatchers.hasSuperType(ElementMatchers.named("org.apache.kafka.clients.producer.Callback")))
+                .type(KafkaWriterOnCompletionMatcher.getTypeMatcher())
                 .transform((builder, typeDescription, classLoader, javaModule) ->
                         builder.visit(Advice.to(KafkaWriterOnCompletionAdvice.class)
-                                .on(KafkaWriterOnCompletionMatcher.get())))
+                                .on(KafkaWriterOnCompletionMatcher.getMethodMatcher())))
                 .installOn(inst);
     }
 }

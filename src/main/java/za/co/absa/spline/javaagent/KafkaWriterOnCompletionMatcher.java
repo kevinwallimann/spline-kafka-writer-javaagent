@@ -16,18 +16,26 @@
 package za.co.absa.spline.javaagent;
 
 import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
 
 public class KafkaWriterOnCompletionMatcher {
-    private final static ElementMatcher<MethodDescription> onCompletionMatcher = ElementMatchers
+    private final static ElementMatcher<MethodDescription> methodMatcher = ElementMatchers
             .named("onCompletion")
             .and(ElementMatchers.takesArguments(2))
             .and(ElementMatchers.takesArgument(1, Exception.class))
             .and(ElementMatchers.returns(void.class))
             .and(ElementMatchers.isPublic());
 
-    public static ElementMatcher<MethodDescription> get() {
-        return onCompletionMatcher;
+    private final static ElementMatcher<TypeDescription> typeMatcher =
+            ElementMatchers.hasSuperType(ElementMatchers.named("org.apache.kafka.clients.producer.Callback"));
+
+    public static ElementMatcher<TypeDescription> getTypeMatcher() {
+        return typeMatcher;
+    }
+
+    public static ElementMatcher<MethodDescription> getMethodMatcher() {
+        return methodMatcher;
     }
 }

@@ -19,14 +19,12 @@ import net.bytebuddy.asm.Advice;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
 public class KafkaWriterOnCompletionAdvice {
-    public static RecordMetadata firstRecordMetadata = null;
 
     @Advice.OnMethodEnter
-    public static void enter(@Advice.AllArguments() Object[] args) {
-        RecordMetadata recordMetadata = (RecordMetadata) args[0];
-        if (firstRecordMetadata == null) {
-            firstRecordMetadata = recordMetadata;
+    public static void enter(@Advice.Origin String origin, @Advice.AllArguments() Object[] args) {
+        if (origin.contains("org.apache.spark.sql.kafka010.KafkaRowWriter")) {
+            RecordMetadata recordMetadata = (RecordMetadata) args[0];
+            System.out.println("RecordMetadata:" + recordMetadata);
         }
-        System.out.println("RecordMetadata:" + recordMetadata);
     }
 }

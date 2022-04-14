@@ -23,12 +23,12 @@ import java.lang.instrument.Instrumentation;
 
 public class Agent {
     public static void load(String args, Instrumentation inst) {
-        System.out.println("Agent loaded");
+        System.out.println("Spline Kafka Writer Java Agent loaded");
         new AgentBuilder.Default()
                 .type(ElementMatchers.hasSuperType(ElementMatchers.named("org.apache.kafka.clients.producer.Callback")))
                 .transform((builder, typeDescription, classLoader, javaModule) ->
                         builder.visit(Advice.to(KafkaWriterOnCompletionAdvice.class)
-                                .on(ElementMatchers.named("onCompletion"))))
+                                .on(KafkaWriterOnCompletionMatcher.get())))
                 .installOn(inst);
     }
 }
